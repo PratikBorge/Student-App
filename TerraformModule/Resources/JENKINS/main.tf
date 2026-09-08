@@ -12,17 +12,18 @@ resource "aws_instance" "jenkinsmaster" {
     }
     user_data = <<-EOF
     #!/bin/bash
-    sudo apt-get update -y
-    sudo apt-get install -y fontconfig openjdk-17-jre wget
+    sudo -i
+    apt-get update -y
+    apt-get install -y fontconfig openjdk-21-jre curl
     mkdir -p /etc/apt/keyrings
-    wget -O /etc/apt/keyrings/jenkins-keyring.asc \
-    https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key \
+    -o /etc/apt/keyrings/jenkins-keyring.asc
     echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" \
     > /etc/apt/sources.list.d/jenkins.list
-    sudo apt-get update -y
-    sudo apt-get install -y jenkins
-    sudo systemctl enable jenkins
-    sudo systemctl start jenkins
+    apt-get update -y
+    apt-get install -y jenkins
+    systemctl enable jenkins
+    systemctl start jenkins
     EOF
 }
 resource "aws_instance" "jenkinsnode" {
