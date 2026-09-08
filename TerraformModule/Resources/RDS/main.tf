@@ -12,7 +12,7 @@ resource "aws_db_instance" "db_instance" {
     instance_class = var.aws_db_instance_class
     port = var.aws_db_port
     storage_encrypted = true
-    kms_key_id = "arn:aws:iam::267307198563:user/Pratik"
+    kms_key_id = "arn:aws:kms:ap-southeast-1:267307198563:key/52566c30-bcc7-4219-9f8b-59b371fd9241"
     storage_type = var.aws_db_storage_type
     identifier = "studentapp"
     db_name = "studentapp"
