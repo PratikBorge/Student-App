@@ -1,6 +1,6 @@
 variable "aws_instance_type" {
   type    = string
-  default = "t2.medium"
+  default = "c7i-flex.large"
 }
 variable "key_name"{
   type    = string
