@@ -10,17 +10,19 @@ resource "aws_instance" "jenkinsmaster" {
     root_block_device {
       volume_size = var.volume_size
     }
-    user_data        = <<-EOF
+    user_data = <<-EOF
     #!/bin/bash
-    sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+    sudo apt-get update -y
+    sudo apt-get install -y fontconfig openjdk-17-jre wget
+    mkdir -p /etc/apt/keyrings
+    wget -O /etc/apt/keyrings/jenkins-keyring.asc \
     https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-    echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
-    https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-    /etc/apt/sources.list.d/jenkins.list > /dev/null
-    sudo apt update
-    sudo apt install fontconfig openjdk-17-jre -y
-    sudo apt-get update
-    sudo apt-get install jenkins -y
+    echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" \
+    > /etc/apt/sources.list.d/jenkins.list
+    sudo apt-get update -y
+    sudo apt-get install -y jenkins
+    sudo systemctl enable jenkins
+    sudo systemctl start jenkins
     EOF
 }
 resource "aws_instance" "jenkinsnode" {
