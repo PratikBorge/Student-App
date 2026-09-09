@@ -3,7 +3,7 @@ LABEL engg="pratborge"
 
 USER root
 WORKDIR /opt/
-ADD https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.100/bin/apache-tomcat-8.5.100.tar.gz .
+ADD https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.100/bin/apache-tomcat-8.5.100.tar.gz .
 RUN tar -xzvf apache-tomcat-8.5.100.tar.gz
 WORKDIR /opt/apache-tomcat-8.5.100
 ADD https://artifactforthreeprat.s3.ap-southeast-1.amazonaws.com/student.war webapps/student.war
