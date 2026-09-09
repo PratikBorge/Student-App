@@ -12,7 +12,7 @@ pipeline {
                 dir('./studentapp') {
                     sh'''
                     sudo apt update -y
-                    sudo mvn clean package
+                    mvn clean package
                     sudo mv ./target/*.war ./target/student.war
                     sudo snap install aws-cli --classic
                     sudo aws s3 cp ./target/student.war <s3bucket_url> --acl public-read
