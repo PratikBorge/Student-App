@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'agent1'
+        label 'student'
     }
     tools{
         maven "maven"
@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git branch: 'main', credentialsId: '<credentials_id>', url: '<github_repo_link>'
+                git branch: 'dev', credentialsId: 'prat', url: 'https://github.com/PratikBorge/Student-App.git'
                 dir('./studentapp') {
                     sh'''
                     sudo apt update -y
@@ -18,31 +18,46 @@ pipeline {
                     sudo aws s3 cp ./target/student.war <s3bucket_url> --acl public-read
                     ''' //add role of S3 full access to node instance
                 }
-            }
+           }
         }
         stage('Test') {
             steps{
                 echo 'Test is done!'
             }
         }
-        stage('Deploy') {
+        stage('Build & Push Backend') {
             steps {
-                dir('./Docker/Backend') {
-                    sh'''
-                    sudo docker login -u <docker_hub_username> -p <docker_hub_password>
-                    sudo docker build -t pratikborge/backend . //same as your dockerhub repo
-                    sudo docker push pratikborge/backend
-                    sh'''
+                dir('Docker/Backend') {
+                   withCredentials([
+                       usernamePassword(
+                          credentialsID: 'docker',
+                          usernameVariable: 'DOCKER_USER',
+                          passwordVariable: 'DOCKER_PASSWORD'
+                      )
+                   ]) {
+                       sh '''
+                          echo "$DOCKER_PASSWORD" | docker login \
+                               -u "$DOCKER_USER" \
+                               --password-stdin
+                           docker build -t "$DOCKER_USER/backend:latest" .
+                           docker push "$DOCKER_USER/backend:latest"
+                          '''
+                       }
                 }
-                dir('./Docker/Frontend') {
-                    sh'''
-                    sudo docker login -u <docker_hub_username> -p <docker_hub_password>
-                    sudo docker build -t pratikborge/frontend . //same as your dockerhub repo
-                    sudo docker push pratikborge/frontend
-                    '''
+            }
+        }
+         stage('Build & Push Frontend') {
+             steps {
+                 dir('Docker/Frontend') {
+                   sh '''
+                      echo "$DOCKER_PASSWORD" | docker login \
+                               -u "$DOCKER_USER" \
+                               --password-stdin
+                      docker build -t "$DOCKER_USER/frontend:latest" .
+                      docker push "$DOCKER_USER/frontend:latest"
+                      '''
                 }
             }
         }
     }
-}
-        
+}        
