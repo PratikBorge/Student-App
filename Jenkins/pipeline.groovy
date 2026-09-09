@@ -30,7 +30,7 @@ pipeline {
                 dir('Docker/Backend') {
                    withCredentials([
                        usernamePassword(
-                          credentialsID: 'docker',
+                          credentialsId: 'Docker',
                           usernameVariable: 'DOCKER_USER',
                           passwordVariable: 'DOCKER_PASSWORD'
                       )
@@ -49,12 +49,19 @@ pipeline {
          stage('Build & Push Frontend') {
              steps {
                  dir('Docker/Frontend') {
-                   sh '''
-                      echo "$DOCKER_PASSWORD" | docker login \
+                     withCredentials([
+                       usernamePassword(
+                          credentialsId: 'Docker',
+                          usernameVariable: 'DOCKER_USER',
+                          passwordVariable: 'DOCKER_PASSWORD'
+                      )
+                   ]) {
+                      sh '''
+                         echo "$DOCKER_PASSWORD" | docker login \
                                -u "$DOCKER_USER" \
                                --password-stdin
-                      docker build -t "$DOCKER_USER/frontend:latest" .
-                      docker push "$DOCKER_USER/frontend:latest"
+                         docker build -t "$DOCKER_USER/frontend:latest" .
+                         docker push "$DOCKER_USER/frontend:latest"
                       '''
                 }
             }
