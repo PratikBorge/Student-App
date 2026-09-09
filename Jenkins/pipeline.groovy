@@ -15,7 +15,7 @@ pipeline {
                     mvn clean package
                     sudo mv ./target/*.war ./target/student.war
                     sudo snap install aws-cli --classic
-                    sudo aws s3 cp ./target/student.war s3://artifactforthreeprat/student.war
+                    sudo aws s3 cp ./target/student.war s3://artifactforthreeprat/student.war --acl public-read
                     ''' //add role of S3 full access to node instance
                 }
            }
