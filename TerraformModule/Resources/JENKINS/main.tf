@@ -41,7 +41,7 @@ resource "aws_instance" "jenkinsnode" {
     user_data = <<-EOF
     #!/bin/bash
     sudo apt update
-    sudo apt install openjdk-11-jre-headless -y
+    sudo apt-get install -y fontconfig openjdk-21-jre curl
     sudo apt-get update
     sudo apt install docker.io -y
     EOF
