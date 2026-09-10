@@ -8,7 +8,7 @@ terraform {
     }
 
     backend "s3" {
-        bucket = "terraform-state-three-tier-architecture"
+        bucket = "terraform-three-tier-architecture"
         key    = "terraform.tfstate"
         region = "ap-southeast-1"
         profile = "configs"
